@@ -1,18 +1,65 @@
-# Dika-Morphe-Patches
+<h1 align="center">Dika Morphe Patches</h1>
 
-Kode patch GreatDay berbasis Morphe, versi sumber 0.9.0-trial.1. Versi Hermes terdahulu direkonsiliasi ke satu basis sumber.
+<p align="center">Kumpulan patch berbasis Morphe untuk GreatDay 8.</p>
+
+<p align="center">
+  <img alt="Versi" src="https://img.shields.io/badge/versi-0.9.0--trial.1-d97706?style=flat-square" />
+  <img alt="Status" src="https://img.shields.io/badge/status-trial-d97706?style=flat-square" />
+  <img alt="Target" src="https://img.shields.io/badge/target-GreatDay%201.79.1-555?style=flat-square" />
+  <img alt="Lisensi" src="https://img.shields.io/badge/lisensi-GPL--3.0-2563eb?style=flat-square" />
+</p>
+
+<p align="center">
+  <a href="#status">Status</a> ·
+  <a href="#struktur">Struktur</a> ·
+  <a href="#build">Build</a> ·
+  <a href="#dokumentasi">Dokumentasi</a> ·
+  <a href="#penafian">Penafian</a>
+</p>
+
+---
+
+## Ringkasan
+
+Repositori ini memuat kode patch [Morphe](https://github.com/MorpheApp/morphe-patches-template) untuk aplikasi GreatDay 8 (`com.greatday.app`). Versi sumber saat ini adalah **0.9.0-trial.1**. Basis kode patch versi Hermes terdahulu telah digabung ke satu sumber.
+
+Tahap trial ini menguji jadwal native dengan alarm exact (bawaan 07:00 dan 19:00 WITA, Senin–Jumat), notifikasi, dan penyimpanan lokasi sementara di penyimpanan privat patch. Hook ke GreatDay mengembalikan `NOT_IMPLEMENTED`, sehingga patch **belum mencatat apa pun ke antrean GreatDay**.
+
+## Status
+
+| Aspek | Keterangan |
+| --- | --- |
+| Rilis | Trial; bukan rilis stabil |
+| Target | APK GreatDay 8 versi 1.79.1 (22725), dicocokkan lewat enam fingerprint |
+| Hook GreatDay | `NOT_IMPLEMENTED` |
+| Pengiriman offline | Gerbang pengiriman dan konfirmasi pengguna dipertahankan |
+| Pengujian perangkat | Poco X7; Doze mendalam/semalaman belum diuji |
+
+Batasan integrasi native dicatat pada [docs/NATIVE-TRIAL.md](docs/NATIVE-TRIAL.md). Repositori tidak memuat APK GreatDay, kredensial perusahaan, data lokasi pengguna, maupun APK uji.
+
+## Struktur
+
+```text
+patches/          Patch Morphe (Kotlin) dan resource JavaScript
+native-runtime/   Extension native Android (alarm, service, penyimpanan)
+tests/            Pengujian JavaScript dan browser
+scripts/          Pemeriksaan target dan artefak
+docs/             Kompatibilitas, pengembangan, uji perangkat, uji native
+patches-bundle.json   Metadata bundle untuk Morphe
+```
 
 ## Build
 
-JDK 21, Android SDK Platform 36/Build Tools 36.0.0, dan akses dependency Morphe diperlukan.
+**Prasyarat:** JDK 21, Android SDK Platform 36 dengan Build Tools 36.0.0, dan akses ke dependensi Morphe.
 
 ```powershell
 .\gradlew.bat buildAndroid --console=plain
 ```
 
-Wrapper Gradle dari template Morphe yang tersedia lokal telah disertakan. Bila registry GitHub Packages meminta autentikasi, gunakan `gpr.user`/`gpr.key` pada konfigurasi Gradle pribadi di luar repositori, atau environment yang didukung settings Gradle. Jangan commit token.
+Bila registry GitHub Packages meminta autentikasi, simpan `gpr.user` dan `gpr.key` pada konfigurasi Gradle pribadi di luar repositori, atau lewat environment yang didukung `settings.gradle.kts`. **Jangan men-commit token.**
 
-Pengujian JavaScript:
+<details>
+<summary>Pengujian</summary>
 
 ```sh
 node tests/scheduler.test.cjs
@@ -20,16 +67,29 @@ node tests/background.test.cjs
 node tests/native.test.cjs
 ```
 
-Rilis terbaru yang tersedia masih **trial**. Kode native memiliki keterbatasan integrasi yang dicatat dalam `docs/NATIVE-TRIAL.md`; paket ini tidak menjadikannya rilis stabil. Gerbang pengiriman dan konfirmasi pengguna dipertahankan. Tidak ada APK GreatDay, kredensial perusahaan, data lokasi pengguna, atau APK uji yang dimasukkan.
+Daftar lengkap pemeriksaan (browser smoke, Robolectric, verifikasi APK target, dan artefak) ada di [docs/NATIVE-TRIAL.md](docs/NATIVE-TRIAL.md).
 
-Sesuaikan metadata sumber dan `patches-bundle.json` ke repositori baru sebelum menjadikannya sumber Morphe. Lisensi dan NOTICE template dipertahankan.
+Validasi lokal terakhir (22 November 2026): 78 pengujian JavaScript dan `buildAndroid` offline lulus. Belum diuji terhadap server atau akun nyata.
+</details>
 
-## Rilis dan repositori
+## Rilis
 
-Rilis lokal yang tersedia berada dalam `releases/`; cocokkan SHA-256 pada `releases/SHA256SUMS.txt`. Rilis diabaikan oleh Git agar diunggah terpisah melalui GitHub Releases.
+Rilis lokal berada di `releases/`; cocokkan SHA-256 pada `releases/SHA256SUMS.txt`. Folder ini diabaikan Git dan diunggah terpisah melalui GitHub Releases. Sesuaikan metadata sumber dan `patches-bundle.json` bila repositori dipindahkan atau dijadikan sumber Morphe baru.
 
-Gunakan folder ini sebagai root repositori baru. Kredensial, riwayat Git lama, data pribadi, cache, rancangan agent, dan draft tidak disertakan. Metadata yang masih bertanda `REPLACE_WITH_...` perlu diisi sesuai hosting tujuan.
+## Dokumentasi
 
-## Pemeriksaan paket sumber — 22 November 2026
+| Dokumen | Isi |
+| --- | --- |
+| [CHANGELOG.md](CHANGELOG.md) | Riwayat perubahan |
+| [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) | Audit kompatibilitas dan fingerprint target |
+| [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) | Panduan pengembangan |
+| [docs/DEVICE_TESTS.md](docs/DEVICE_TESTS.md) | Checklist uji perangkat |
+| [docs/NATIVE-TRIAL.md](docs/NATIVE-TRIAL.md) | Panduan dan batasan uji native |
 
-78 tes JavaScript dan Gradle buildAndroid offline lulus. Versi sumber dan rilis tetap trial; tidak diuji ke server atau perangkat.
+## Penafian
+
+Proyek ini tidak berafiliasi dengan pengembang GreatDay maupun proyek Morphe. Gunakan hanya pada aplikasi yang Anda miliki secara sah dan sesuai kebijakan serta ketentuan penggunaan yang berlaku, termasuk ketentuan perusahaan Anda.
+
+## Lisensi
+
+[GNU GPL v3](LICENSE). Pemberitahuan dari template Morphe dipertahankan pada [NOTICE](NOTICE), termasuk pembatasan penggunaan nama Morphe pada versi turunan.
